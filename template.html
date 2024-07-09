@@ -1,0 +1,39 @@
+<html>
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    body {
+      width: 210mm;
+      height: 297mm;
+      padding: 0.2in 0.5in;
+    }
+    body > div,
+    p {
+      width: 100%;
+    }
+    #body {
+      line-height: 2;
+    }
+  </style>
+  <body>
+    <div id="applicant">
+      <b>{applicant.name}</b>
+      <p>{applicant.address}</p>
+      <p>{applicant.phone}</p>
+      <p>{applicant.email}</p>
+    </div>
+    <p id="date">{date}</p>
+    <div id="company">
+      <p>{company.hiring_manager.name}</p>
+      <p>{company.name}</p>
+      <p>{company.address}</p>
+    </div>
+    <div id="body">
+      <p>{cover_letter.salutation}</p>
+      <p>{cover_letter.body}</p>
+      <p>{cover_letter.signature}</p>
+    </div>
+  </body>
+</html>

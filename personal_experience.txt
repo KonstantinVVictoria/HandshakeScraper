@@ -1,0 +1,20 @@
+## Konstantin Victoria
+
+**Full-Stack Developer & Machine Learning Engineer |  (415) 889-0008  |  konstantinvictoria@gmail.com | www.linkedin.com/in/konstantin-victoria-a676a4166/**
+
+**Passionate about building innovative and impactful applications. Experienced with a wide range of technologies, from AI-powered tools to full-stack web development.**
+
+**Highlights**
+
+* **Machine Learning:** Developed a ChatGPT-powered AI assistant (Shovels AI), achieving significant performance improvements and accuracy in text classification tasks.
+* **Full-Stack Development:** Built a full-stack framework with Lua frontend and Express.js backend (LuaSparks), incorporating state management and component-based design principles. Led development for a serverless platform on AWS using Next.js and other technologies (PODCO/LavaLab). 
+* **Project Leadership:** Managed and mentored student teams in hackathons and development projects, winning first place in DVC's Project Bracket competition (Project Boomerang).
+* **Problem Solving:** Applied data analysis and algorithmic solutions to enhance user experiences and optimize platform functionality. 
+
+**Technical Skills**
+
+JavaScript (React, Node, Next), Python (ML libraries), Lua, C++, AWS, Firebase, MongoDB, SQL, HTML, CSS
+
+**Education**
+
+Associate of Science in Computer Science, Diablo Valley College & College of San Mateo 
