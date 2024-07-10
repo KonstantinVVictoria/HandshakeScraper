@@ -36,7 +36,8 @@ The bot can only apply to applications that are completable within the site. It 
 3. Page Number is the number of the page of listings the bot will start scraping at.
 4. Batch size is how many listings it will scrape at once. Lower it to increase performance. Increase it to speed up the scraping process.
 5. OpenAI Model is the type of model that will be utilized in the scraping process. At this moment, the model responsible for writing cover letter is `gpt-4o` despite the option you define for this field.
-6.
+6. In `personalize_experience.txt` type in the raw text format of your resume, or a condensed version of your experiences.
+7. In `requirement_prompt.txt` type in your job preferences -- what you are looking for?
 
 # Known Bugs 🐜
 
