@@ -1,10 +1,11 @@
-import * as fs from "fs";
-export const OPENAIKEY = "";
 export const REQUIREMENTS = fs.readFileSync(
-  "./requirement_prompt.txt",
+  "./config/requirement_prompt.txt",
   "utf-8"
 );
-export const EDGEUSERPROFILEPATH = `C:\Users\<User Name>\AppData\Local\Microsoft\Edge\User Data\Default`;
+import * as fs from "fs";
+export const OPENAIKEY =
+  "sk-proj-WgTq3xh9cm28NVxtjv73T3BlbkFJ3vrDPFWqWbwAXtAyveXe";
+export const EDGEUSERPROFILEPATH = `C:\Users\<User>\AppData\Local\Microsoft\Edge\User Data\Default`;
 export const EDGEEXECUTABLEPATH = `C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe`;
 export const PAGENUMBER = 1;
 export const BATCHSIZE = 5;

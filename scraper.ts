@@ -7,8 +7,9 @@ import {
   OPENAIMODEL,
   PAGENUMBER,
   REQUIREMENTS,
-} from "./config";
+} from "./config/config";
 import * as fs from "fs";
+import write_cover_letter from "./cover_letter_writer";
 
 async function scrape() {
   const browser = await chromium.launchPersistentContext(EDGEUSERPROFILEPATH, {
@@ -95,7 +96,11 @@ async function apply(
       await page.goto(`https://cpp.joinhandshake.com${job_uri}`);
       const post = await page.waitForSelector("[data-hook='card']");
       const job_info = await post.evaluate((element) => {
-        function traverse(element: HTMLElement | SVGElement, path: number[]) {
+        //@ts-ignore
+        window.traverse = function traverse(
+          element: HTMLElement | SVGElement,
+          path: number[]
+        ) {
           try {
             let curr_e: HTMLElement | Node = element;
             for (const i of path) {
@@ -105,7 +110,13 @@ async function apply(
           } catch (error) {
             return undefined;
           }
-        }
+        };
+        //@ts-ignore
+        const traverse = window.traverse as (
+          element: HTMLElement | SVGElement,
+          path: number[]
+        ) => HTMLElement | Node;
+
         const MoreButton = Array.from(
           traverse(element, [0, 3, 3, 0, 0, 0]).childNodes
         ).pop() as HTMLButtonElement;
@@ -146,17 +157,11 @@ async function apply(
 
       if (analysis.should_apply) {
         const can_apply = await post.evaluate((element) => {
-          function traverse(element: HTMLElement | SVGElement, path: number[]) {
-            try {
-              let curr_e: HTMLElement | Node = element;
-              for (const i of path) {
-                curr_e = curr_e.childNodes[i];
-              }
-              return curr_e;
-            } catch (error) {
-              return undefined;
-            }
-          }
+          //@ts-ignore
+          const traverse = window.traverse as (
+            element: HTMLElement | SVGElement,
+            path: number[]
+          ) => HTMLElement | Node;
 
           const ApplyButton = traverse(
             element,
@@ -187,13 +192,11 @@ async function apply(
         await page.waitForSelector("fieldset");
 
         let app_status = await post.evaluate((element) => {
-          function traverse(element: HTMLElement | SVGElement, path: number[]) {
-            let curr_e: HTMLElement | Node = element;
-            for (const i of path) {
-              curr_e = curr_e.childNodes[i];
-            }
-            return curr_e;
-          }
+          //@ts-ignore
+          const traverse = window.traverse as (
+            element: HTMLElement | SVGElement,
+            path: number[]
+          ) => HTMLElement | Node;
 
           const Fields = Array.from(document.querySelectorAll("fieldset"));
           let needs_other_docs = false;
@@ -225,20 +228,11 @@ async function apply(
         if (app_status === "need_cover_letter") {
           try {
             const UploadCoverLetterClass = await page.evaluate(() => {
-              function traverse(
+              //@ts-ignore
+              const traverse = window.traverse as (
                 element: HTMLElement | SVGElement,
                 path: number[]
-              ) {
-                try {
-                  let curr_e: HTMLElement | Node = element;
-                  for (const i of path) {
-                    curr_e = curr_e.childNodes[i];
-                  }
-                  return curr_e;
-                } catch (error) {
-                  return undefined;
-                }
-              }
+              ) => HTMLElement | Node;
               const Fields = Array.from(document.querySelectorAll("fieldset"));
 
               for (const Field of Fields) {
@@ -254,13 +248,7 @@ async function apply(
               }
             });
             console.log(UploadCoverLetterClass);
-            // const UploadButton = await page.$(
-            //   `.${UploadCoverLetterClass} > span > button`
-            // );
 
-            // await UploadButton.click();
-            // await UploadButton.click();
-            // await UploadButton.click();
             console.log(
               "\x1b[32m%s\x1b[0m",
               "Generating Cover Letter for " + job_info.title
@@ -350,7 +338,7 @@ async function apply(
   }
 }
 const personal_experience = fs.readFileSync(
-  "./personal_experience.txt",
+  "./config/personal_experience.txt",
   "utf-8"
 );
 const cover_letter_template = fs.readFileSync("./template.html", "utf-8");
@@ -391,59 +379,32 @@ async function generate_cover_letter(
   listing_details: string,
   browser: BrowserContext
 ) {
-  const query = `# Personal Experience:\n${personal_experience}\n\nJob Listing:\n${listing_details}\n\nWith the job listing information and my personal experience, please write a professional, thoughtful, and impactful cover letter. Make sure it is relevant to the listing -- do not relate to unecessary experiences. Try to come out as genuine and passionate.\n\nRespond in the following json format:\n${JSON.stringify(
-    {
-      applicant: {
-        name: "string",
-        address: "string or null",
-        phone: "string",
-        email: "string",
-      },
-      company: {
-        hiring_manager: {
-          name: "string or null",
-        },
-        name: "string or null",
-        address: "string or null",
-        position_name: "string",
-      },
-      cover_letter: {
-        salutation: "string",
-        body: "string (DO NOT INCLUDE THE SALUTATION OR SIGNATURE, ONLY BODY OF COVER LETTER)",
-        signature: "string (sign-off and signature)",
-      },
-    }
-  )}`;
+  // const query = `# Personal Experience:\n${personal_experience}\n\nJob Listing:\n${listing_details}\n\nWith the job listing information and my personal experience, please write a professional, thoughtful, and impactful cover letter. Make sure it is relevant to the listing -- do not relate to unecessary experiences. Try to come out as genuine and passionate.\n\nRespond in the following json format:\n${JSON.stringify(
+  //   {
+  //     applicant: {
+  //       name: "string",
+  //       address: "string or null",
+  //       phone: "string",
+  //       email: "string",
+  //     },
+  //     company: {
+  //       hiring_manager: {
+  //         name: "string or null",
+  //       },
+  //       name: "string or null",
+  //       address: "string or null",
+  //       position_name: "string",
+  //     },
+  //     cover_letter: {
+  //       salutation: "string",
+  //       body: "string (DO NOT INCLUDE THE SALUTATION OR SIGNATURE, ONLY BODY OF COVER LETTER)",
+  //       signature: "string (sign-off and signature)",
+  //     },
+  //   }
+  // )}`;
 
-  const data = (await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${OPENAIKEY}`,
-      "Content-Security-Policy":
-        "default-src *; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' stackexchange.com",
-    },
-    body: JSON.stringify({
-      model: "gpt-4o",
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content: "You are a great cover-letter writer",
-        },
-        {
-          role: "user",
-          content: query,
-        },
-      ],
-    }),
-  })
-    .then((res) => res.json())
-    .then((data: any) => {
-      console.log(data);
-      const result = JSON.parse(data.choices[0].message.content as string);
-      return result;
-    })) as CoverLetter;
+  const data = await write_cover_letter(personal_experience, listing_details);
+
   const position_name = data.company.position_name;
   data.company.position_name = undefined;
   const cover_letter_data = { ...data, date: new Date().toLocaleString() };
@@ -451,7 +412,7 @@ async function generate_cover_letter(
   const flattened_paths = flatten_obj(cover_letter_data);
   console.log(flattened_paths);
   Object.entries(flattened_paths).forEach(([path, value]) => {
-    template = template.replace(`{${path}}`, value || "");
+    template = template.replaceAll(`{${path}}`, value || "");
   });
 
   const page = await browser.newPage();
@@ -482,8 +443,6 @@ async function should_submit(listing: Listing, requirements: string) {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${OPENAIKEY}`,
-      "Content-Security-Policy":
-        "default-src *; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' stackexchange.com",
     },
     body: JSON.stringify({
       model: OPENAIMODEL,
