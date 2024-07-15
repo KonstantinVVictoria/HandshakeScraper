@@ -29,7 +29,7 @@ The bot can only apply to applications that are completable within the site. It 
 
 ## Configuration Process
 
-1. In `config.ts`, paste in your OpenAI Key in `OPENAIKEY`.
+1. In `config/config.ts`, paste in your OpenAI Key in `OPENAIKEY`.
 2. Type in `edge://version` in the address bar of Edge.
    i. Find your Edge user profile path and paste it in `EDGEUSERPROFILEPATH`.
    ii. Find your Edge executable path and paste it in `EDGEEXECUTABLEPATH`.
